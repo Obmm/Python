@@ -1,25 +1,44 @@
 import csv
 
-input_file = "input.csv"
-output_file = "output.csv"
+INPUT_FILE = "input.csv"
+OUTPUT_FILE = "output.csv"
 
-with open(input_file, "r") as file:
-  reader = csv.DictReader(file)
 
-  filtered_data = []
+def read_data(file_path):
+    with open(file_path, "r") as file:
+        reader = csv.DictReader(file)
+        return list(reader)
 
-  for row in reader:
-    salary = int(row["salary"])
 
-    if salary >= 3000:
-      filtered_data.append(row)
+def filter_salary(data, min_salary=3000):
+    filtered = []
 
-with open(output_file, "w", newline="") as file:
+    for row in data:
+        if int(row["salary"]) >= min_salary:
+            filtered.append(row)
+
+    return filtered
+
+
+def write_data(file_path, data):
     fieldnames = ["name", "age", "city", "salary"]
-    
-    writer = csv.DictWriter(file, fieldnames=fieldnames)
-    
-    writer.writeheader()
-    writer.writerows(filtered_data)
 
-print("Processamento concluído!")
+    with open(file_path, "w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+
+        writer.writeheader()
+        writer.writerows(data)
+
+
+def main():
+    data = read_data(INPUT_FILE)
+
+    filtered_data = filter_salary(data)
+
+    write_data(OUTPUT_FILE, filtered_data)
+
+    print("Processamento concluído!")
+
+
+if __name__ == "__main__":
+    main()
