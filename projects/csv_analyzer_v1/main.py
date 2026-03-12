@@ -1,34 +1,34 @@
 import pandas as pd
 
 INPUT_FILE = "input.csv"
-OUTPUT_FILE = "output.csv"
 
 
-def load_data(file_path):
-    return pd.read_csv(file_path)
+def load_data():
+    return pd.read_csv(INPUT_FILE)
 
 
-def analyze_data(df):
-    report = {}
-    report["Average Salary"] = df["salary"].mean()
-    report["Max Salary"] = df["salary"].max()
-    report["Count by City"] = df["city"].value_counts().to_dict()
-    return report
+def salary_by_city(df):
+    return df.groupby("city")["salary"].mean()
 
 
-def save_report(report, file_path):
-    # Transformar dicionário em DataFrame para salvar como CSV
-    df_report = pd.DataFrame([
-        {"Metric": k, "Value": v} for k, v in report.items()
-    ])
-    df_report.to_csv(file_path, index=False)
+def top_salaries(df):
+    return df.sort_values(by="salary", ascending=False).head(3)
+
+
+def save_reports(city_salary, top_salary):
+    city_salary.to_csv("salary_by_city.csv")
+    top_salary.to_csv("top_salaries.csv", index=False)
 
 
 def main():
-    df = load_data(INPUT_FILE)
-    report = analyze_data(df)
-    save_report(report, OUTPUT_FILE)
-    print("Análise concluída!")
+    df = load_data()
+
+    city_salary = salary_by_city(df)
+    top_salary = top_salaries(df)
+
+    save_reports(city_salary, top_salary)
+
+    print("Relatórios gerados!")
 
 
 if __name__ == "__main__":
